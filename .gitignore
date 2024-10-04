@@ -1,0 +1,51 @@
+**/target
+/release
+.env
+/.secrets
+*.session
+NOTES.md
+PERSONAL_NOTES.md
+
+# ADDING SOME OTHER DEFINITIONS JUST IN CASE
+# env & secrets #
+######################
+.env
+.env.dev
+.env.development
+.dev.env
+.development.env
+.env.prod
+.env.production
+.prod.env
+.production.env
+/.secrets
+
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+**/.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+
+# Compiled source & Packages #
+###################
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
