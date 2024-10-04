@@ -1,4 +1,3 @@
----
 <div class="center">
 
 # mapsd
@@ -8,7 +7,6 @@ Because sometimes `sed` needs an explicit key/value map.
 [Get Started](#quickstart) - [Installation](#installation) - [Usage](#usage)
 
 </div>
----
 
 Find & Replace text in multiple files using an explicit CSV of Before/After pairs.
 
