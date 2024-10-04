@@ -118,7 +118,7 @@ git_status:
 	@if ! git diff --cached --quiet --exit-code; then \
 		echo "Staging is not committed (git commit)"; \
 	fi
-	@if ! git diff --quiet main..origin/main; then \
-		echo "Local main branch is not synced with Remote main (git push)"; \
+	@if ! git diff --quiet master..origin/master; then \
+		echo "Local master branch is not synced with Remote master (git push)"; \
 	fi
 

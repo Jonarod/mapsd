@@ -1,7 +1,10 @@
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
-#[structopt(name = "mapsd", about = "Find & Replace text in multiple files using an explicit CSV of Before/After pairs.")]
+#[structopt(
+    name = "mapsd",
+    about = "Find & Replace text in multiple files using an explicit CSV of Before/After pairs."
+)]
 pub struct Opt {
     /// Files to process (glob pattern)
     #[structopt(name = "FILES")]
@@ -23,7 +26,6 @@ pub struct Opt {
     #[structopt(short, long, default_value = "replaced.")]
     pub prefix: String,
 
-    
     /// Replace files in-place (USE WITH CAUTION)
     #[structopt(long = "DANGEROUSLY-REPLACE-INPLACE")]
     pub inplace: bool,

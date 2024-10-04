@@ -1,6 +1,11 @@
-use std::{collections::HashMap, sync::Arc, io::Write, fs::{self, File}};
+use mapsd::{read_csv, replace_in_file, run};
+use std::{
+    collections::HashMap,
+    fs::{self, File},
+    io::Write,
+    sync::Arc,
+};
 use tempfile::TempDir;
-use mapsd::{run, read_csv, replace_in_file};
 
 #[test]
 fn test_read_csv() {
@@ -10,11 +15,13 @@ fn test_read_csv() {
     writeln!(file, "key1,value1\nkey2,value2,extra").unwrap();
 
     let result = read_csv(csv_path.to_str().unwrap(), ",", false).unwrap();
-    
+
     let expected: HashMap<String, String> = vec![
         ("key1".to_string(), "value1".to_string()),
         ("key2".to_string(), "value2,extra".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     assert_eq!(result, expected);
 }
@@ -27,15 +34,16 @@ fn test_read_csv_with_headers() {
     writeln!(file, "Key,Value\nkey1,value1\nkey2,value2").unwrap();
 
     let result = read_csv(csv_path.to_str().unwrap(), ",", true).unwrap();
-    
+
     let expected: HashMap<String, String> = vec![
         ("key1".to_string(), "value1".to_string()),
         ("key2".to_string(), "value2".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     assert_eq!(result, expected);
 }
-
 
 #[test]
 fn test_read_csv_with_uncommon_delimiter() {
@@ -45,16 +53,16 @@ fn test_read_csv_with_uncommon_delimiter() {
     writeln!(file, "key1===value1\nkey2===value2").unwrap();
 
     let result = read_csv(csv_path.to_str().unwrap(), "===", false).unwrap();
-    
+
     let expected: HashMap<String, String> = vec![
         ("key1".to_string(), "value1".to_string()),
         ("key2".to_string(), "value2".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     assert_eq!(result, expected);
 }
-
-
 
 #[test]
 fn test_read_csv_preserves_spaces() {
@@ -64,16 +72,17 @@ fn test_read_csv_preserves_spaces() {
     writeln!(file, "key1 ,value1\nkey2, value2\nkey3,value3 ").unwrap();
 
     let result = read_csv(csv_path.to_str().unwrap(), ",", false).unwrap();
-    
+
     let expected: HashMap<String, String> = vec![
         ("key1 ".to_string(), "value1".to_string()),
         ("key2".to_string(), " value2".to_string()),
         ("key3".to_string(), "value3 ".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     assert_eq!(result, expected);
 }
-
 
 #[test]
 fn test_read_csv_preserves_empty_value() {
@@ -83,17 +92,17 @@ fn test_read_csv_preserves_empty_value() {
     writeln!(file, "key1,value1\nkey2,value2\nkey3,").unwrap();
 
     let result = read_csv(csv_path.to_str().unwrap(), ",", false).unwrap();
-    
+
     let expected: HashMap<String, String> = vec![
         ("key1".to_string(), "value1".to_string()),
         ("key2".to_string(), "value2".to_string()),
         ("key3".to_string(), "".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     assert_eq!(result, expected);
 }
-
-
 
 #[test]
 fn test_creates_copy_by_default() {
@@ -105,7 +114,9 @@ fn test_creates_copy_by_default() {
     let key_value_map: HashMap<String, String> = vec![
         ("Hello".to_string(), "Bonjour".to_string()),
         ("world".to_string(), "monde".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     let key_value_map = Arc::new(key_value_map);
 
@@ -116,7 +127,6 @@ fn test_creates_copy_by_default() {
 
     assert_eq!(content, "Bonjour, monde! This is a test.\n");
 }
-
 
 #[test]
 fn test_replaces_all_occurrences() {
@@ -128,7 +138,9 @@ fn test_replaces_all_occurrences() {
     let key_value_map: HashMap<String, String> = vec![
         ("Hello".to_string(), "Bonjour".to_string()),
         ("world".to_string(), "monde".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     let key_value_map = Arc::new(key_value_map);
 
@@ -140,7 +152,6 @@ fn test_replaces_all_occurrences() {
     assert_eq!(content, "Bonjour, monde! This is a test for the monde of Bonjour mondes.\nCeci est une autre ligne avec un Bonjour monde.\n");
 }
 
-
 #[test]
 fn test_replace_inplace() {
     let temp_dir = TempDir::new().unwrap();
@@ -151,7 +162,9 @@ fn test_replace_inplace() {
     let key_value_map: HashMap<String, String> = vec![
         ("Hello".to_string(), "Bonjour".to_string()),
         ("world".to_string(), "monde".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     let key_value_map = Arc::new(key_value_map);
 
@@ -161,9 +174,6 @@ fn test_replace_inplace() {
 
     assert_eq!(content, "Bonjour, monde! This is a test.\n");
 }
-
-
-
 
 #[test]
 fn test_empty_value_acts_delete() {
@@ -175,7 +185,9 @@ fn test_empty_value_acts_delete() {
     let key_value_map: HashMap<String, String> = vec![
         ("Hello".to_string(), "Bonjour".to_string()),
         ("world".to_string(), "".to_string()),
-    ].into_iter().collect();
+    ]
+    .into_iter()
+    .collect();
 
     let key_value_map = Arc::new(key_value_map);
 
@@ -187,15 +199,13 @@ fn test_empty_value_acts_delete() {
     assert_eq!(content, "Bonjour, ! This is a test for the  of Bonjour s.\nCeci est une autre ligne avec un Bonjour .\n");
 }
 
-
-
 // Integration test
 #[test]
 fn test_main_functionality() {
     use mapsd::arguments::Opt;
 
     let temp_dir = TempDir::new().unwrap();
-    
+
     // Create test files
     let csv_path = temp_dir.path().join("map.csv");
     let mut csv_file = File::create(&csv_path).unwrap();
@@ -226,14 +236,13 @@ fn test_main_functionality() {
     assert_eq!(content, "Bonjour, monde! This is a test.\n");
 }
 
-
 // Integration test
 #[test]
 fn test_main_replaces_multiple_files() {
     use mapsd::arguments::Opt;
 
     let temp_dir = TempDir::new().unwrap();
-    
+
     // Create test files
     let csv_path = temp_dir.path().join("map.csv");
     let mut csv_file = File::create(&csv_path).unwrap();
@@ -249,7 +258,11 @@ fn test_main_replaces_multiple_files() {
 
     // Run the main function
     let opt = Opt {
-        files: temp_dir.path().join("mapsd_test_input_*.txt").display().to_string(),
+        files: temp_dir
+            .path()
+            .join("mapsd_test_input_*.txt")
+            .display()
+            .to_string(),
         map: csv_path.to_str().unwrap().to_string(),
         delimiter: ",".to_string(),
         has_headers: false,

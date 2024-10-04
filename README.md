@@ -1,4 +1,3 @@
----
 <div align="center">
 
 # mapsd
@@ -11,41 +10,43 @@ Because sometimes `sed` needs an explicit key/value map.
 
 ---
 
+<div align="center">
 Find & Replace text in multiple files using an explicit CSV of Before/After pairs.
+</div>
 
 ---
 
+<br/>
+<br/>
+
 # Quickstart
 
-1. Install
+#### 1. Download [latest release](https://github.com/Jonarod/mapsd/releases) for your system
+Or you can also build it from source using `cargo` (see [Installation](#installation)). Then move the binary somewhere like in `/usr/local/bin` *(just make sure it is some folder already in your `$PATH`)*
 
-Download [latest release](https://github.com/Jonarod/mapsd/releases) binary for your system and move somewhere matching your `$PATH`, like in `/usr/local/bin`.
 
-Or you can also build it from source using `cargo` (see [Installation](#installation))
-
-2. Create a `.csv` file named `map.csv` with 2 columns:
+#### 2. Create a `.csv` file with 2 columns:
 
 ```csv
 old_string1,new_string1
 old_string2,new_string2
 old_string3,new_string3
 ```
-**WARNING: beware of the `spaces` and `separator` you put here !! Every character counts, even spaces**
+
+> ***WARNING: beware of the `spaces` and `separator` you put here !! Every character counts, even spaces***
 
 
-3. For all files ending with `.html` in the directory `~/Documents/` and its subdirectories: replace all occurrences of the old `key` with its corresponding new `value` found in `./map.csv`, and create a new resulting file prefixed with `replaced.` (e.g: `replaced.my_file.html`) without touching the original one. (if you need to replace the same file in-place, use the `--DANGEROUSLY-REPLACE-INPLACE` flag)
-
-```sh
-mapsd "./Documents/**/*.html" -m ./map.csv
-```
-
-
-4. Check (Usage)[#usage] to have a list of all things you can customize to fit your needs, or directly read the manpage:
+#### 3. Replace all occurrences of the 1st column with the 2nd, over all `.html` files in the `./Documents` directory
 
 ```sh
-mapsd --help
+mapsd "./Documents/**/*.html" -m ./my_map.csv
 ```
 
+*(No worries, by default it applies the replacement in a copy of the files. When you feel you are ready you can add the `--DANGEROUSLY-REPLACE-INPLACE` flag to actually replace things in place.)*
+
+
+<br/>
+<br/>
 
 # Usage
 
@@ -100,8 +101,10 @@ The quickstart is quite explicit, but here are some tips & tricks.
 
 - **Change files directly without copy:** add the `--DANGEROUSLY-REPLACE-INPLACE` flag which, as its name suggests... comes with great responsibilities ;)
 
-- **What happens under the hood?**: From a high perspective `mapsd` will parse your provided csv `./map.csv`, then load each `key/value` pairs into memory. Then it will look for each files matching your glob pattern. Once it has both `key/value` pairs and all matching documents paths into memory, it will spawn several workers/threads (using `rayon`) that will open each file to search each `key` and replace them with the corresponding `value`. For each file matched, it will create a copy of it with the prefix `replaced.`, with the relevant replacements. Each original filepath will be printed to console as they are treated (unless the `--silent` flag is provided) so that one can simply trash the files if needed. Once you are confortable with your changes, just repeat the process adding the `--DANGEROUSLY-REPLACE-INPLACE` flag which, as its name suggests... comes with great responsibilities ;) Now under the hood it involves just a bit more efficiency efforts to stream inputs/outputs and optimize search/replace,... check out the code.
 
+
+<br/>
+<br/>
 
 # Installation
 
@@ -113,15 +116,15 @@ Go to the [releases](https://github.com/Jonarod/mapsd/releases), and download th
 
 <details>
 <summary>Build from source</summary>
-Just `git clone` this repo and `cd` into it.
-Then [install rust](https://www.rust-lang.org/tools/install), then do:
-```sh
-cargo build --release
-```
+[Install rust](https://www.rust-lang.org/tools/install), then:
 
-This will build the binary and place it into `./target/release/mapsd`. You can just move it somewhere like in `/usr/local/bin/`:
 ```sh
-mv ./target/release/mapsd /usr/local/bin/
+git clone git@github.com:Jonarod/mapsd.git
+cd mapsd
+cargo build --release
+
+# Move it somewhere, like this
+sudo mv ./target/release/mapsd /usr/local/bin/
 ```
 
 Check everything is fine:
@@ -135,6 +138,9 @@ mapsd --version
 Coming soon...
 </details>
 
+
+<br/>
+<br/>
 
 # Roadmap
 - [ ] add a `--regex` flag to interpret each `key` in the `.csv` as a regex instead of a litteral string

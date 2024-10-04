@@ -1,8 +1,8 @@
-use mapsd::{run, arguments::Opt};
-use structopt::StructOpt;
-use std::io;
 use env_logger::Builder;
 use log::LevelFilter;
+use mapsd::{arguments::Opt, run};
+use std::io;
+use structopt::StructOpt;
 
 fn main() -> io::Result<()> {
     let opt = Opt::from_args();
@@ -15,7 +15,6 @@ fn main() -> io::Result<()> {
         builder.filter_level(LevelFilter::Info);
     }
     builder.init();
-    
+
     run(&opt)
 }
-

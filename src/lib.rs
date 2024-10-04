@@ -1,20 +1,24 @@
-use std::{collections::HashMap, sync::Arc, fs::File, io::{self, BufReader, BufWriter, Write, Read}, path::Path};
 use glob::glob;
-use rayon::prelude::*;
+use log::{error, info};
 use memchr::memmem;
-use log::{info, error};
+use rayon::prelude::*;
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::{self, BufReader, BufWriter, Read, Write},
+    path::Path,
+    sync::Arc,
+};
 
 use crate::arguments::Opt;
 
 pub mod arguments;
 
 pub fn run(opt: &Opt) -> io::Result<()> {
-
     // Step 1: Read the CSV file and store the key/value pairs in a HashMap
     let key_value_map = read_csv(&opt.map, &opt.delimiter, opt.has_headers)?;
     let key_value_map = Arc::new(key_value_map);
 
-        
     // Step 2: Use glob pattern to match files
     let paths: Vec<_> = glob(&opt.files)
         .expect("Failed to read glob pattern")
@@ -24,7 +28,8 @@ pub fn run(opt: &Opt) -> io::Result<()> {
 
     // Step 3: Process files in parallel
     paths.par_iter().for_each(|path| {
-        if let Err(e) = replace_in_file(path, Arc::clone(&key_value_map), opt.inplace, &opt.prefix) {
+        if let Err(e) = replace_in_file(path, Arc::clone(&key_value_map), opt.inplace, &opt.prefix)
+        {
             error!("Failed to process file {}: {}", path.display(), e);
         }
     });
@@ -32,7 +37,11 @@ pub fn run(opt: &Opt) -> io::Result<()> {
     Ok(())
 }
 
-pub fn read_csv(file_path: &str, delimiter: &str, has_headers: bool) -> io::Result<HashMap<String, String>> {
+pub fn read_csv(
+    file_path: &str,
+    delimiter: &str,
+    has_headers: bool,
+) -> io::Result<HashMap<String, String>> {
     let mut file = File::open(file_path)?;
     let mut content = String::new();
     file.read_to_string(&mut content)?;
@@ -56,7 +65,12 @@ pub fn read_csv(file_path: &str, delimiter: &str, has_headers: bool) -> io::Resu
     Ok(map)
 }
 
-pub fn replace_in_file(path: &Path, key_value_map: Arc<HashMap<String, String>>, inplace: bool, prefix: &str) -> io::Result<()> {
+pub fn replace_in_file(
+    path: &Path,
+    key_value_map: Arc<HashMap<String, String>>,
+    inplace: bool,
+    prefix: &str,
+) -> io::Result<()> {
     // Step 4: Read the contents of the file
     let file = File::open(path)?;
     let mut reader = BufReader::new(file);
@@ -68,7 +82,7 @@ pub fn replace_in_file(path: &Path, key_value_map: Arc<HashMap<String, String>>,
     for (key, value) in key_value_map.iter() {
         let key_bytes = key.as_bytes();
         let value_bytes = value.as_bytes();
-        
+
         let mut new_content = Vec::new();
         let mut last_match = 0;
         for match_index in memmem::find_iter(&content, key_bytes) {
@@ -77,7 +91,7 @@ pub fn replace_in_file(path: &Path, key_value_map: Arc<HashMap<String, String>>,
             new_content.extend_from_slice(value_bytes);
             last_match = match_index + key_bytes.len();
         }
-        
+
         if modified {
             new_content.extend_from_slice(&content[last_match..]);
             content = new_content;
