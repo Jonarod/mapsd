@@ -76,7 +76,7 @@ push: ## Git commit + push
 	@read -p "Commit message: " commit_message; \
 		git add --all; \
 		git commit -m "$$commit_message"
-	@git push -u origin main
+	@git push -u origin master
 
 push_new_release: ## Version bump + Git tags last commit + push
 	@make bump
