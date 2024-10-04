@@ -135,7 +135,11 @@ mapsd --version
 
 <details>
 <summary>Install using `cargo`</summary>
-Coming soon...
+Make sure you have [Rust installed](https://www.rust-lang.org/tools/install), then:
+
+```sh
+cargo install mapsd
+```
 </details>
 
 
@@ -144,4 +148,3 @@ Coming soon...
 
 # Roadmap
 - [ ] add a `--regex` flag to interpret each `key` in the `.csv` as a regex instead of a litteral string
-- [ ] publish to crates.io automatically to be able to `cargo install mapsd`

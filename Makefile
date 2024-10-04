@@ -103,7 +103,7 @@ push_new_release: ## Version bump + Git tags last commit + push
 	@if ! git diff --quiet main..origin/main; then \
 		read -p "Local main branch is not synced with Remote main. Do you want to git push? (Enter=Yes | n=No) " git_push; \
 		if [ "$$git_push" = "yes" ] || [ "$$git_push" = "y" ] || [ -z "$$git_push" ]; then \
-			git push -u origin main; \
+			git push -u origin master; \
 		fi \
 	fi
 
